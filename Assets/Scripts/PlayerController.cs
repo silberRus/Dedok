@@ -41,11 +41,11 @@ public class PlayerController : MonoBehaviour
         {
             float dir = (Input.GetAxisRaw("Horizontal"));
 
-            if (!isMovement && dir != 0 && dir != currRoad)
+            if (!isMovement && dir != 0 && dir != currRoad && currRoad < 2 && currRoad > -2)
             {
+                isMovement = true;
                 currenDistance = distance;
-                currRoad += dir;
-
+            
                 if (TimeMoving == 0)
                     TimeMoving = animator.GetCurrentAnimatorStateInfo(0).length;
 
@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Move(float currenDir)
     {
-        isMovement = true;
+        //isMovement = true;
         animator.SetTrigger(currenDir > 0 ? "turnLeft" : "turnRight");
         
         while (currenDistance > 0)
