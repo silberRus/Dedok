@@ -338,3 +338,10 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/Library
+/Logs
+/Temp
+/Assets/Simple city plain
+/Assets/Hovl Studio/Procedural fire
+/Assets/GameReadyProps
+/Assets/Christmas-Assets-FREE
