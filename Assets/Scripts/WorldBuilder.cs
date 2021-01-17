@@ -1,15 +1,11 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class WorldBuilder : MonoBehaviour
-{
-    [SerializeField] GameObject[] Platforms;
-    [SerializeField] GameObject[] Obstacles;
-
+{    
     /// <summary>
-    /// Пустое препядствие (отсутствие препядствия)
+    /// Пустое препятствие (отсутствие препятствия)
     /// </summary>
-    private readonly GameObject emptyObstacle;
+    [SerializeField] GameObject emptyConteiner;
 
     /// <summary>
     /// максимальное число объектов в одной структуре
@@ -17,27 +13,23 @@ public class WorldBuilder : MonoBehaviour
     [SerializeField] int maxObjects = 10;
 
     /// <summary>
-    /// Контейнер для платформ
+    /// Чем больше тем реже будут выпадать препятствия
     /// </summary>
+    [SerializeField] int Rate = 100;
+
     [SerializeField] private Transform platformContainer;
-
-    /// <summary>
-    /// Контейнеры для препятствий
-    /// 0 - левый
-    /// 1 - средний
-    /// 2 - центральный
-    /// </summary>
     [SerializeField] private Transform[] ObstacleContainers;
+    [SerializeField] private Transform[] SurpiseContainers;
 
-    /// <summary>
-    /// Последнее припятствия
-    /// 0 - левый
-    /// 1 - средний
-    /// 2 - центральный
-    /// </summary>
-    private Transform[] lastObstacles; 
-    
+    [SerializeField] GameObject[] Platforms;
+    [SerializeField] GameObject[] Obstacles;
+    [SerializeField] GameObject[] Surprises;
+
+    private Transform[] lastObstacles;
+    private Transform[] lastSurprises;
     private Transform lastPlatform;
+
+    delegate void CreateObjMore(int i);
 
     private void Start()
     {
@@ -45,19 +37,29 @@ public class WorldBuilder : MonoBehaviour
         {
             CreatePlatform();
         }
+        
         lastObstacles = new Transform[ObstacleContainers.Length];
-        for (int i = 0; i < ObstacleContainers.Length; i++)
+        CreateObjsMore(CreateObstacle, ObstacleContainers.Length);
+
+        lastSurprises = new Transform[SurpiseContainers.Length];
+        CreateObjsMore(CreateSurprise, SurpiseContainers.Length);
+    }
+
+    private void CreateObjsMore(CreateObjMore funCreate, int roadsNum)
+    {
+        for (int i = 0; i < roadsNum; i++)
         {
             for (int m = 0; m < maxObjects; m++)
             {
-                CreateObstacle(i);
-            }            
+                funCreate(i);
+            }
         }
     }
-    private Transform CreateObj(GameObject[] objs, Transform parent, Transform lastObj, int indObstacle, string Tag)
+
+    private Transform CreateObj(GameObject obj, Transform parent, Transform lastObj, int indObstacle, string Tag)
     {
         GameObject newObj = Instantiate(
-                objs[Random.Range(0, objs.Length)],
+                obj,
                 lastObj == null ? parent.position : lastObj.GetComponent<PlatformController>().endPoint.position,
                 Quaternion.identity,
                 parent);
@@ -68,11 +70,20 @@ public class WorldBuilder : MonoBehaviour
     
     public void CreateObstacle(int ind)
     {
-        lastObstacles[ind] = CreateObj(Obstacles, ObstacleContainers[ind], lastObstacles[ind], ind, "Danger");
+        lastObstacles[ind] = CreateObj(
+            Random.Range(WorldController.instance.level, Rate) > WorldController.instance.level ? emptyConteiner : Obstacles[Random.Range(0, Obstacles.Length)],
+            ObstacleContainers[ind], lastObstacles[ind], ind, "Danger");
     }
 
-     public void CreatePlatform()
+    public void CreateSurprise(int ind)
     {
-        lastPlatform = CreateObj(Platforms, platformContainer, lastPlatform, -1, "Platform");
+        lastSurprises[ind] = CreateObj(
+            Random.Range(WorldController.instance.level, Rate) > WorldController.instance.level ? emptyConteiner : Surprises[Random.Range(0, Surprises.Length)],
+            SurpiseContainers[ind], lastSurprises[ind], ind, "Surpise");
+    }
+
+    public void CreatePlatform()
+    {
+        lastPlatform = CreateObj(Platforms[Random.Range(0, Platforms.Length)], platformContainer, lastPlatform, -1, "Platform");
     }
 }

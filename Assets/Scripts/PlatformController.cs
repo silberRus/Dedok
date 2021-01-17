@@ -5,11 +5,6 @@ public class PlatformController : MonoBehaviour
     public Transform endPoint;
 
     public int indObstacle;
-
-    /// <summary>
-    /// Перфабы из которых может создаваться
-    /// </summary>
-    public GameObject[] perfabs;
     
     private void Start()
     {

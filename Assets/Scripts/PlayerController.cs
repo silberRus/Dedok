@@ -78,7 +78,6 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Move(float currenDir)
     {
-        //isMovement = true;
         animator.SetTrigger(currenDir > 0 ? "turnLeft" : "turnRight");
         
         while (currenDistance > 0)

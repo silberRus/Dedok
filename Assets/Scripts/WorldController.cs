@@ -7,10 +7,12 @@ public class WorldController : MonoBehaviour
     public float worldSpeed;
     public WorldBuilder WorldBuilder;
 
-    public delegate void GodOfObjects();
-    public event GodOfObjects OnPlatformMovement;
-
+    public delegate void TryDelAndCreateObj();
+    public event TryDelAndCreateObj OnPlatformMovement;
+    
     public static WorldController instance;
+
+    public int level;
 
     void Awake()
     {
@@ -22,7 +24,7 @@ public class WorldController : MonoBehaviour
         {
             WorldController.instance = this;
             DontDestroyOnLoad(gameObject);
-        }
+        }    
     }
 
     private void Start()
@@ -46,9 +48,7 @@ public class WorldController : MonoBehaviour
         {
             yield return new WaitForSeconds(1f);
             if (OnPlatformMovement != null)
-            {
                 OnPlatformMovement();
-            }
         }
     }
 }
